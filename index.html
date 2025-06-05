@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COPD Decision Support GOLD 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @media print {
+        @page {
+          margin: 2cm;
+        }
+
+        html, body {
+          height: auto !important;
+          overflow: visible !important;
+          background: white !important; /* Ensure clean background */
+          margin: 0;
+          padding: 0;
+        }
+
+        body * {
+          visibility: hidden !important; /* Make it more aggressive */
+          transform: none !important; /* Reset transforms */
+          box-sizing: border-box !important; /* Reset box-sizing */
+          print-color-adjust: exact !important; 
+          -webkit-print-color-adjust: exact !important;
+        }
+        
+        /* Specifically hide the modal overlay and its content box wrapper */
+        div[role="dialog"][aria-modal="true"] { /* Targets the outermost div of PrintReport modal */
+           visibility: hidden !important;
+        }
+        #printable-report-modal-content-box { /* Targets the direct content box of the modal */
+            visibility: hidden !important;
+        }
+
+        #printable-report, #printable-report * {
+          visibility: visible !important;
+        }
+
+        #printable-report {
+          position: fixed !important; /* Changed from absolute to fixed for print robustness */
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important; /* Ensures full width within page margins */
+          bottom: 0 !important; /* Ensures full height within page margins */
+          width: auto !important; /* Let position define size */
+          height: auto !important;    
+          margin: 0 !important; /* Page margins are handled by @page */
+          padding: 0 !important; /* Screen padding is on this element, remove for print. Content inside has its own. */
+          border: none !important;
+          box-shadow: none !important;
+          font-size: 10pt; /* Adjusted for readability */
+          line-height: 1.3; /* Adjusted for readability */
+          overflow: visible !important; /* Crucial for content to flow across pages */
+        }
+
+        .print-hide {
+          display: none !important;
+        }
+        
+        #printable-report h1, #printable-report h2, #printable-report h3, 
+        #printable-report p, #printable-report div, #printable-report span, 
+        #printable-report strong, #printable-report ul, #printable-report li {
+            color: #000 !important; 
+            background-color: transparent !important;
+        }
+        #printable-report .text-blue-800, 
+        #printable-report .text-green-700, 
+        #printable-report .text-red-700,
+        #printable-report .text-purple-700, 
+        #printable-report .text-purple-800 {
+            color: #000 !important;
+        }
+        #printable-report .bg-blue-50,
+        #printable-report .bg-purple-50,
+        #printable-report .bg-green-50, 
+        #printable-report .bg-yellow-50, 
+        #printable-report .bg-red-50 {  
+            background-color: transparent !important;
+            border: 0.5pt solid #ccc !important; 
+            padding: 0.2cm !important; 
+        }
+
+        #printable-report .text-center.mb-8 { 
+          margin-bottom: 0.4cm !important;
+          padding-bottom: 0.2cm !important;
+        }
+        #printable-report h1#report-title { 
+          font-size: 16pt !important; 
+          margin-bottom: 0.1cm !important;
+        }
+         #printable-report .text-gray-600 { /* For dates under title */
+            font-size: 10pt !important;
+            color: #333 !important; /* Darker gray for print */
+            margin-bottom: 0.05cm !important;
+        }
+        #printable-report .text-sm.text-gray-500 { /* This targets the disclaimer */
+            font-size: 8.5pt !important; /* Slightly smaller for disclaimer */
+            color: #444 !important;
+        }
+
+        #printable-report section { 
+          margin-bottom: 0.3cm !important;
+          page-break-inside: avoid !important; /* Try to keep sections together */
+        }
+        #printable-report h2 { 
+          font-size: 12pt !important; 
+          font-weight: bold !important;
+          margin-bottom: 0.15cm !important;
+          padding-bottom: 0.05cm !important;
+          border-bottom-width: 0.5pt !important;
+          page-break-after: avoid !important; /* Avoid break right after a heading */
+        }
+        
+        #printable-report .grid {
+           /* Grid itself is fine, just spacing adjustments */
+        }
+        #printable-report .gap-x-4 {
+          column-gap: 0.2cm !important; 
+        }
+        #printable-report .gap-y-2 {
+          row-gap: 0.05cm !important;
+        }
+        #printable-report div[class*="gap-y-"] > div { 
+           line-height: 1.2 !important;
+        }
+
+        #printable-report .space-y-1 > * + * { margin-top: 0.05cm !important; }
+        #printable-report .space-y-2 > * + * { margin-top: 0.1cm !important; }
+        #printable-report .space-y-3 > * + * { margin-top: 0.15cm !important; }
+
+        #printable-report .text-lg { font-size: 12pt !important; } 
+        #printable-report .text-sm { font-size: 9pt !important; } 
+        #printable-report .text-xs { font-size: 8pt !important; line-height: 1.1 !important; } 
+        
+        #printable-report strong {
+            font-weight: bold; 
+        }
+
+        #printable-report ul {
+          padding-left: 0.6cm !important; /* Slightly less indent */
+          margin-top: 0.05cm !important;
+          margin-bottom: 0.1cm !important;
+        }
+        #printable-report li {
+          margin-bottom: 0.02cm !important;
+          padding-left: 0.1cm !important;
+        }
+        #printable-report ul.list-disc {
+            list-style-position: outside !important; 
+        }
+        
+        #printable-report .mt-8.border-t.pt-4 { 
+          margin-top: 0.4cm !important;
+          padding-top: 0.15cm !important;
+          border-top-width: 0.5pt !important;
+        }
+         #printable-report .mt-1 { margin-top: 0.05cm !important; } 
+
+        #printable-report .bg-purple-50, 
+        #printable-report .grid > div,
+        #printable-report section > div { 
+          page-break-inside: auto !important; /* Allow natural breaks within these, but avoid for section itself */
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.513.0",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <!-- 
+      ! ! ! IMPORTANT - READ THIS IF THE APP DOESN'T DISPLAY ! ! !
+      =============================================================================
+      ERROR IN CONSOLE: "Uncaught SyntaxError: Unexpected end of input" 
+                             or "Uncaught SyntaxError: Invalid or unexpected token" ?
+      =============================================================================
+      This application is written in TypeScript (.ts) and JSX (.tsx). 
+      Web browsers DO NOT understand these languages directly.
+      They need standard JavaScript (.js).
+
+      TO MAKE THIS WORK, YOU MUST:
+      1. USE A BUILD/COMPILATION TOOL:
+         - Examples: Vite (recommended), Next.js, Create React App, Parcel.
+         - These tools CONVERT .tsx files into .js that the browser can read.
+
+      2. CONFIGURE YOUR PROJECT:
+         - Follow the instructions of your chosen build tool for a React project with TypeScript.
+
+      3. BUILD YOUR APPLICATION:
+         - Run the build command (often `npm run build` or `yarn build`).
+         - This will create a folder (e.g., `dist/` or `build/`) containing optimized HTML, JS, CSS files.
+      
+      4. DEPLOY THE BUILD FOLDER:
+         - Host the contents of THIS folder (not your .tsx source files) on Vercel or another host.
+
+      FOR VERCEL:
+      - Ensure your Vercel project is configured with the correct "Framework Preset" 
+        (e.g., Vite, Next.js, Create React App). Vercel will then run the build automatically.
+      - If you use "Other" (static site), Vercel will NOT build. You'll need to build 
+        locally and deploy the build folder, or configure build commands in Vercel.
+
+      The script below <script type="module" src="./index.tsx"></script> WILL ATTEMPT to load 
+      the .tsx file directly, which will cause an error WITHOUT a build process.
+    -->
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
