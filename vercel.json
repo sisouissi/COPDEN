@@ -1,0 +1,13 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self' *.vercel.app vercel.live; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.tailwindcss.com https://esm.sh *.vercel.app vercel.live; style-src 'self' 'unsafe-inline' *.vercel.app vercel.live; img-src 'self' data: *.vercel.app vercel.live; font-src 'self' data: *.vercel.app *.gstatic.com vercel.live; connect-src 'self' *.vercel.app vercel.live vitals.vercel-insights.com;"
+        }
+      ]
+    }
+  ]
+}
